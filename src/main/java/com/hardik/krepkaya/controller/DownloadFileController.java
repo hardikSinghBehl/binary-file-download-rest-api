@@ -40,8 +40,7 @@ public class DownloadFileController {
 	}
 
 	@GetMapping("/response-entity")
-	public ResponseEntity<InputStreamResource> logoFileDownloadHandler(final HttpServletResponse httpServletResponse)
-			throws IOException {
+	public ResponseEntity<InputStreamResource> logoFileDownloadThroughResponseEntityHandler() throws IOException {
 		final var resource = new InputStreamResource(
 				new FileInputStream(new File("./src/main/resources/templates/projectLogo.png")));
 		return ResponseEntity.status(HttpStatus.OK)
