@@ -8,20 +8,26 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping(value = "/download-logo")
 public class DownloadFileController {
 
-	@GetMapping("/download-logo")
-	public void logoFileDownloadHandler(final HttpServletResponse httpServletResponse) throws IOException {
-		httpServletResponse.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=ProjectLogo.png");
+	@GetMapping("/http-response")
+	public void logoFileDownloadThroughHttpResponseHandler(final HttpServletResponse httpServletResponse)
+			throws IOException {
+		httpServletResponse.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=project-logo.png");
 
 		final var outputStream = new BufferedOutputStream(httpServletResponse.getOutputStream());
 		final var inputStream = new BufferedInputStream(
-				new FileInputStream(new File("./src/main/resources/templates/projectLogo.png")));
+				new FileInputStream(new File("./src/main/resources/templates/project-logo.png")));
 
 		byte[] buffer = new byte[1024];
 		int bytesRead;
@@ -31,5 +37,14 @@ public class DownloadFileController {
 		outputStream.flush();
 		inputStream.close();
 
+	}
+
+	@GetMapping("/response-entity")
+	public ResponseEntity<InputStreamResource> logoFileDownloadHandler(final HttpServletResponse httpServletResponse)
+			throws IOException {
+		final var resource = new InputStreamResource(
+				new FileInputStream(new File("./src/main/resources/templates/projectLogo.png")));
+		return ResponseEntity.status(HttpStatus.OK)
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=project-logo.png").body(resource);
 	}
 }
